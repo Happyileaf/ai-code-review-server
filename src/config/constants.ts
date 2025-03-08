@@ -1,6 +1,6 @@
-export const GITHUB_API_URL = "https://api.github.com";
-export const GITHUB_ACCESS_TOKEN = "<Your GitHub Access Token>";
-export const DEEPSEEK_API_KEY = "Your DeepSeek API Key";
+export const GITHUB_API_URL = process.env.GITHUB_API_URL || 'https://api.github.com';
+export const GITHUB_ACCESS_TOKEN = process.env.GITHUB_ACCESS_TOKEN || '';
+export const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || '';
 export const PORT = process.env.PORT || 3000;
 
 export const CODE_REVIEW_PROMPT = `
