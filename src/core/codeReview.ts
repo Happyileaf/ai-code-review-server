@@ -1,10 +1,11 @@
 import OpenAI from "openai";
-import { CODE_REVIEW_PROMPT, DEEPSEEK_API_KEY } from "../config/constants";
+import { CODE_REVIEW_PROMPT } from "../config/constants";
+import { ALIYUN_BAILIAN_API_KEY } from "../app";
 
-const openai = new OpenAI({
-  baseURL: "https://api.deepseek.com",
-  apiKey: DEEPSEEK_API_KEY,
-});
+// const openai = new OpenAI({
+//   baseURL: "https://api.deepseek.com",
+//   apiKey: DEEPSEEK_API_KEY,
+// });
 
 export interface CodeDiff {
   filePath: string;
@@ -17,7 +18,13 @@ export interface ReviewResult {
 }
 
 export async function performCodeReview(diff: CodeDiff): Promise<ReviewResult> {
+  const openai = new OpenAI({
+    baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    apiKey: ALIYUN_BAILIAN_API_KEY,
+  });
   const completion = await openai.chat.completions.create({
+    // model: "deepseek-chat",
+    model: "deepseek-r1",
     messages: [
       { role: "system", content: CODE_REVIEW_PROMPT },
       {
@@ -25,12 +32,11 @@ export async function performCodeReview(diff: CodeDiff): Promise<ReviewResult> {
         content: `Review the following code changes:\n${diff.content}`,
       },
     ],
-    model: "deepseek-chat",
   });
 
   const reviewContent = completion.choices[0].message.content as string;
   const comments = analyzeReviewResults(reviewContent);
-  
+
   return {
     filePath: diff.filePath,
     comments: comments || "",

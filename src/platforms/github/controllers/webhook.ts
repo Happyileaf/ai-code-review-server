@@ -5,11 +5,14 @@ import { performCodeReview } from "../../../core/codeReview";
 
 export async function handlePullRequestWebhook(req: Request, res: Response): Promise<void> {
   const event: GitHubWebhookEvent = req.body;
+  console.log("Received GitHub webhook event");
+  
 
   if (event.action === "opened" && event.pull_request) {
     const pullRequestId = event.pull_request.number;
     const repoFullName = event.repository?.full_name;
     const diffUrl = event.pull_request.diff_url;
+    const commitId = event.pull_request.head.sha;
 
     if (!repoFullName) {
       res.status(400).send("Repository full name is missing.");
@@ -32,7 +35,8 @@ export async function handlePullRequestWebhook(req: Request, res: Response): Pro
             repoFullName,
             pullRequestId,
             reviewResult.comments,
-            reviewResult.filePath
+            reviewResult.filePath,
+            commitId
           );
         }
       }

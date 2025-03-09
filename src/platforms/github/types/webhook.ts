@@ -3,6 +3,9 @@ export interface GitHubWebhookEvent {
   pull_request?: {
     number: number;
     diff_url: string;
+    head: {
+      sha: string;
+    };
   };
   repository?: {
     full_name: string;
